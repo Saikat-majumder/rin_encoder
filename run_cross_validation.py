@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score
+from tqdm import tqdm  # <-- ADDED TQDM
 
 # Import the original model and losses
 from rin_encodermap.encodermap_model import EncoderMapNet, auto_cost, sketch_cost, l2_regularization
@@ -40,7 +41,8 @@ class MappedDataset(torch.utils.data.Dataset):
 def train_epoch(model, dataloader, optimizer, device):
     model.train()
     total_loss = 0.0
-    for batch in dataloader:
+    # ADDED TQDM
+    for batch in tqdm(dataloader, desc="  Train Batches", leave=False):
         batch = batch.to(device)
         optimizer.zero_grad()
         
@@ -66,7 +68,8 @@ def evaluate(model, dataloader, device):
     all_targets = []
     
     with torch.no_grad():
-        for batch in dataloader:
+        # ADDED TQDM
+        for batch in tqdm(dataloader, desc="  Eval Batches", leave=False):
             batch = batch.to(device)
             code, recon = model(batch)
             
@@ -98,7 +101,7 @@ def evaluate(model, dataloader, device):
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"🚀 Using device: {device}")
+    print(f" Using device: {device}")
     
     # Verify data exists
     if not os.path.exists(NPY_FILE):
@@ -107,7 +110,8 @@ def main():
 
     fold_metrics = {'train_loss': [], 'val_loss': [], 'test_loss': [], 'val_acc': [], 'test_acc': []}
     
-    for k in range(1, 11):
+    # ADDED TQDM FOR FOLDS
+    for k in tqdm(range(1, 11), desc="Cross-Validation Folds"):
         print(f"\n{'='*20} FOLD {k}/10 {'='*20}")
         
         # 1. Create DataLoaders (Memory Mapped)
@@ -115,8 +119,6 @@ def main():
         val_ds = MappedDataset(NPY_FILE, os.path.join(INDICES_DIR, f"valid_mask_fold{k}.npy"))
         test_ds = MappedDataset(NPY_FILE, os.path.join(INDICES_DIR, f"test_mask_fold{k}.npy"))
         
-        # Subsample if datasets are too massive for a quick demo (Optional: remove if you want full training)
-        # For full training, keep the lines below as they are.
         train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
         val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
         test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
@@ -133,8 +135,8 @@ def main():
         epoch_val_accs = []
         epoch_test_accs = []
         
-        # 3. Training Loop
-        for epoch in range(EPOCHS):
+        # ADDED TQDM FOR EPOCHS
+        for epoch in tqdm(range(EPOCHS), desc=f"Fold {k} Epochs", leave=False):
             t_loss = train_epoch(model, train_loader, optimizer, device)
             v_loss, v_acc, _, _ = evaluate(model, val_loader, device)
             te_loss, te_acc, _, _ = evaluate(model, test_loader, device)

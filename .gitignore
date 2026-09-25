@@ -5,3 +5,6 @@ runs/
 *.png
 .ipynb_checkpoints/
 .DS_Store
+PDB-Uniprot/
+closeness_fingerprints.npy
+.venv/

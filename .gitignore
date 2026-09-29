@@ -3,6 +3,7 @@ __pycache__/
 runs/
 *.pt
 *.png
+!cross_val_results/*.png
 .ipynb_checkpoints/
 .DS_Store
 PDB-Uniprot/

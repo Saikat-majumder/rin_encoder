@@ -3,7 +3,7 @@ import glob
 import numpy as np
 
 # --- EXACT CONFIGURATION PROVIDED ---
-PDB_DIR = "/home/subhadip/rin_encoder_1/PDB-Uniprot"
+PDB_DIR = "/home/subhadip/rin_encoder/PDB-Uniprot"
 FOLDS_DIR = "/home/subhadip/rin_encoder/folds"
 OUTPUT_DIR = "fold_indices"
 
@@ -36,8 +36,8 @@ def main():
     pdb_pattern = os.path.join(PDB_DIR, "*.pdb")
     pdb_files = sorted(glob.glob(pdb_pattern))
     
-    print(f"🔍 Scanning PDBs in: {PDB_DIR}")
-    print(f"🔍 Scanning folds in: {FOLDS_DIR}")
+    print(f" Scanning PDBs in: {PDB_DIR}")
+    print(f" Scanning folds in: {FOLDS_DIR}")
     print("-" * 70)
     
     pdb_to_indices = {}
@@ -55,11 +55,11 @@ def main():
             pdb_to_indices[pdb_id] = (current_idx, current_idx + count)
             current_idx += count
             
-    print(f"✅ Total windows mapped: {current_idx}")
+    print(f" Total windows mapped: {current_idx}")
     
     # DEBUG: Show exactly how the PDB IDs are formatted from the folder
     mapped_ids_list = list(pdb_to_indices.keys())
-    print(f"🔍 DEBUG: First 5 mapped PDB IDs from folder: {mapped_ids_list[:5]}")
+    print(f" DEBUG: First 5 mapped PDB IDs from folder: {mapped_ids_list[:5]}")
 
     total_samples = current_idx
     
@@ -82,7 +82,7 @@ def main():
         # DEBUG: Show exactly how the PDB IDs are formatted in the text file
         if k == 1:
             train_list = list(train_pdbs)
-            print(f"🔍 DEBUG: First 5 PDB IDs in train_fold1_pdb.txt: {train_list[:5]}")
+            print(f" DEBUG: First 5 PDB IDs in train_fold1_pdb.txt: {train_list[:5]}")
             
         # Check overlap
         mapped_keys = set(pdb_to_indices.keys())
@@ -90,7 +90,7 @@ def main():
         valid_overlap = len(valid_pdbs.intersection(mapped_keys))
         test_overlap = len(test_pdbs.intersection(mapped_keys))
         
-        print(f"🔍 Fold {k} Debug: Train overlap={train_overlap}, Valid overlap={valid_overlap}, Test overlap={test_overlap}")
+        print(f" Fold {k} Debug: Train overlap={train_overlap}, Valid overlap={valid_overlap}, Test overlap={test_overlap}")
         
         train_mask = np.zeros(total_samples, dtype=bool)
         valid_mask = np.zeros(total_samples, dtype=bool)
@@ -105,10 +105,10 @@ def main():
         np.save(os.path.join(OUTPUT_DIR, f"valid_mask_fold{k}.npy"), valid_mask)
         np.save(os.path.join(OUTPUT_DIR, f"test_mask_fold{k}.npy"), test_mask)
         
-        print(f"✅ Fold {k}: Train={train_mask.sum()}, Valid={valid_mask.sum()}, Test={test_mask.sum()}")
+        print(f" Fold {k}: Train={train_mask.sum()}, Valid={valid_mask.sum()}, Test={test_mask.sum()}")
         
     print("-" * 70)
-    print("🎉 Index mapping complete!")
+    print(" Index mapping complete!")
 
 if __name__ == "__main__":
     main()

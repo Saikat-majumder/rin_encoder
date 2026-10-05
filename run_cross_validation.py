@@ -13,8 +13,8 @@ from tqdm import tqdm  # <-- ADDED TQDM
 from rin_encodermap.encodermap_model import EncoderMapNet, auto_cost, sketch_cost, l2_regularization
 
 # --- CONFIGURATION ---
-NPY_FILE = "closeness_fingerprints.npy"
-INDICES_DIR = "fold_indices"
+NPY_FILE = "closeness_fingerprints_filtered.npy"
+INDICES_DIR = "fold_indices_filtered"
 OUTPUT_DIR = "cross_val_results"
 WINDOW_SIZE = 128
 INPUT_DIM = WINDOW_SIZE * WINDOW_SIZE # 16384

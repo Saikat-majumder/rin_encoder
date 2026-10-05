@@ -8,4 +8,5 @@ runs/
 .DS_Store
 PDB-Uniprot/
 closeness_fingerprints.npy
+closeness_fingerprints_filtered.npy
 .venv/
